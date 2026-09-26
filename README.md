@@ -133,11 +133,9 @@ The package can be installed directly from GitHub:
 
 ```stata
 net install bumidas, ///
-    from("https://raw.githubusercontent.com/SSEconomics/bumidas-stata/main/package") ///
+    from("https://raw.githubusercontent.com/SSEconomics/bumidas-stata/main") ///
     replace
 ```
-
-Then verify the installation:
 
 ```stata
 which mfcollapse
@@ -700,6 +698,9 @@ bumidas-stata/
 ├── LICENSE
 ├── CITATION.cff
 ├── CHANGELOG.md
+├── .gitignore
+├── stata.toc
+├── bumidas.pkg
 │
 ├── stata/
 │   ├── mfcollapse.ado
@@ -712,26 +713,9 @@ bumidas-stata/
 │   ├── mfcollapse_example.do
 │   └── bumidas_example.do
 │
-├── tests/
-│   ├── mfcollapse_test.do
-│   └── bumidas_test.do
-│
-├── applications/
-│   └── fx/
-│       ├── README.md
-│       ├── bumidas_fx.do
-│       └── data/
-│
-├── simulations/
-│   ├── README.md
-│   └── bumidas_simulation.do
-│
-├── package/
-│   ├── bumidas.pkg
-│   └── stata.toc
-│
-└── docs/
-    └── conference/
+└── tests/
+    ├── mfcollapse_test.do
+    └── bumidas_test.do
 ```
 
 ---
