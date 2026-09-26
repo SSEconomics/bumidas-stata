@@ -1,0 +1,19 @@
+v 3
+d BUMIDAS for Stata
+d
+d Stata commands for Bottom-Up Mixed-Frequency Data Sampling.
+d Includes bumidas for estimation and model selection and mfcollapse
+d for constructing mixed-frequency data.
+d
+d Author: Stephen Snudden
+d Wilfrid Laurier University
+d https://github.com/SSEconomics/bumidas-stata
+d
+d Distribution-Date: 20260926
+d
+f stata/bumidas.ado
+f stata/bumidas_p.ado
+f stata/bumidas.sthlp
+f stata/mfcollapse.ado
+f stata/mfcollapse.sthlp
+e
