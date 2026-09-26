@@ -1,0 +1,7 @@
+*.log
+*.smcl
+*.tmp
+*.bak
+*.dta~
+.DS_Store
+Thumbs.db
