@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software and the associated BUMIDAS paper."
+title: "BUMIDAS for Stata"
+type: software
+version: 0.1.0
+
+authors:
+  - family-names: Snudden
+    given-names: Stephen
+
+repository-code: "https://github.com/SSEconomics/bumidas-stata"
+url: "https://github.com/SSEconomics/bumidas-stata"
+
+license: MIT
+
+keywords:
+  - Stata
+  - BUMIDAS
+  - mixed-frequency
+  - MIDAS
+  - forecasting
+  - temporal aggregation
+  - econometrics
+
+abstract: >-
+  Stata commands for Bottom-Up Mixed-Frequency Data Sampling (BUMIDAS).
+  The package provides bumidas for estimation and model selection and
+  mfcollapse for constructing mixed-frequency data, together with examples,
+  certification tests, simulations, and an empirical application.
+
+preferred-citation:
+  type: article
+  title: "Bottom-Up Mixed-Frequency Data Sampling (BUMIDAS)"
+  authors:
+    - family-names: Lee
+      given-names: Quinlan
+    - family-names: Snudden
+      given-names: Stephen
+  year: 2025
+  date-published: 2025-04-01
+  doi: "10.2139/ssrn.5312038"
+  url: "https://ssrn.com/abstract=5312038"
