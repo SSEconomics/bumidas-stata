@@ -1,7 +1,14 @@
+# Stata output / temporary files
 *.log
 *.smcl
 *.tmp
 *.bak
 *.dta~
+
+# Operating-system files
 .DS_Store
 Thumbs.db
+
+# Editor / temporary files
+*~
+*.swp
