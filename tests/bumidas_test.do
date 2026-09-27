@@ -2,7 +2,7 @@
 // bumidas_test.do
 // Certification tests for bumidas
 // BUMIDAS for Stata
-// Version: 0.1.2
+// Version: 0.1.1
 // -----------------------------------------------------------------------------
 // Author: Stephen Snudden, PhD
 // Wilfrid Laurier University
@@ -21,7 +21,6 @@
 // See help bumidas for complete syntax and option documentation.
 // -----------------------------------------------------------------------------
 
-version 18.0
 clear all
 set more off
 set seed 26092026

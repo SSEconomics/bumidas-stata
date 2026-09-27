@@ -1,6 +1,6 @@
-*! version 0.1.0 26sep2026
+*! version 0.1.1 27sep2026
 program define bumidas_p
-    version 18.0
+    version 11.0
 
     if "`e(cmd)'"!="bumidas" error 301
 

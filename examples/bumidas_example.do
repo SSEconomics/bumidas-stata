@@ -2,7 +2,7 @@
 // bumidas_example.do
 // Examples for bumidas
 // BUMIDAS for Stata
-// Version: 0.1.2
+// Version: 0.1.1
 // -----------------------------------------------------------------------------
 // Author: Stephen Snudden, PhD
 // Wilfrid Laurier University

@@ -1,6 +1,6 @@
-*! version 0.1.0 25sep2026
+*! version 0.1.1 27sep2026
 program define mfcollapse, rclass
-    version 18.0
+    version 11.0
 
     syntax varlist(min=1 numeric) [if] [in], ///
         DATE(varname numeric) FREQuency(string) ///

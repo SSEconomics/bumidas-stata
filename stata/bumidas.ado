@@ -1,6 +1,6 @@
-*! version 0.1.2 26sep2026
+*! version 0.1.1 27sep2026
 program define bumidas, eclass
-    version 18.0
+    version 11.0
 
     // Replay previously stored bumidas results
     if replay() {
@@ -850,7 +850,7 @@ end
 // Validate a high-frequency stub and count contiguous terms stub0,...,stubK
 // ============================================================================
 program define _bumidas_stubinfo, rclass
-    version 18.0
+    version 11.0
     syntax , STUB(name)
 
     capture confirm numeric variable `stub'0
@@ -894,7 +894,7 @@ end
 // Compact bumidas results display
 // ============================================================================
 program define _bumidas_display
-    version 18.0
+    version 11.0
 
     if "`e(cmd)'"!="bumidas" error 301
 
