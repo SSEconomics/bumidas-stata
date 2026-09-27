@@ -920,7 +920,7 @@ This software repository is distinct from the complete journal replication archi
 The current commands are written for:
 
 ```text
-Stata 18
+Stata 11 or later.
 ```
 
 The commands require time-series data to be declared using:
