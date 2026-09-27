@@ -4,15 +4,6 @@ All notable changes to this project will be documented in this file.
 
 The project follows [Semantic Versioning](https://semver.org/) where practical.
 
-## [Unreleased]
-
-### Planned
-
-- Additional user testing and documentation refinements.
-- Foreign-exchange application.
-- Representative simulation comparing BUMIDAS with UMIDAS, RMIDAS, and low-frequency benchmarks.
-- Stata package installation files for direct installation from GitHub.
-
 ## [0.1.0] - Initial release
 
 ### Added
@@ -42,7 +33,16 @@ The project follows [Semantic Versioning](https://semver.org/) where practical.
 - Self-contained command examples.
 - Deterministic certification tests for both commands.
 - MIT License.
-- Machine-readable `CITATION.cff`.
 
-[Unreleased]: https://github.com/SSEconomics/bumidas-stata/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/SSEconomics/bumidas-stata/releases/tag/v0.1.0
+## [0.1.1] - 2026-09-27
+
+### Changed
+
+- Standardized all package files to version 0.1.1.
+- Lowered the Stata version requirement from 18.0 to 11.0 to improve backward compatibility.
+- Updated examples, tests, help files, and package metadata accordingly.
+
+### Tested
+
+- Verified successful installation and execution under Stata 14 and Stata 16.
+- Confirmed continued operation under Stata 19.
