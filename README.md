@@ -813,7 +813,7 @@ shows the accepted model-selection path.
 The initial public release is:
 
 ```text
-v0.1.0
+v0.1.1
 ```
 
 The software should be regarded as an early public release.
@@ -868,7 +868,7 @@ Suggested citation:
 ```text
 Snudden, Stephen. 2026.
 BUMIDAS for Stata: Bottom-Up Mixed-Frequency Data Sampling commands.
-Version 0.1.0.
+Version 0.1.1.
 https://github.com/SSEconomics/bumidas-stata
 ```
 
