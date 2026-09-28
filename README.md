@@ -627,15 +627,7 @@ Time-series operators used by `bumidas` require the data to be appropriately dec
 
 The BUMIDAS methodology is developed in:
 
-> Lee, Quinlan and Snudden, Stephen, **“Bottom-Up Mixed-Frequency Data Sampling (BUMIDAS)”**, April 1, 2025.
-
-Available at SSRN:
-
-https://ssrn.com/abstract=5312038
-
-DOI:
-
-https://doi.org/10.2139/ssrn.5312038
+> Lee, Quinlan and Snudden, Stephen, **“Bottom-Up Mixed-Frequency Data Sampling (BUMIDAS)”**, April 1, 2025. Available at SSRN: https://ssrn.com/abstract=5312038
 
 The central idea is that forecasts of temporally aggregated variables can exploit underlying higher-frequency information directly rather than first discarding that information through temporal aggregation.
 
