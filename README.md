@@ -530,9 +530,8 @@ bumidas-stata/
 │   └── bumidas_example.do
 │
 ├── applications/
-│   └── fx/
-│       ├── fx_example.do
-│       └── DataD.xlsx
+│   ├── fx_example.do
+│   └── DataD.xlsx
 │
 ├── simulations/
 │   └── bumidas_simulation.do
