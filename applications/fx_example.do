@@ -2,7 +2,7 @@
 // fx_example.do
 // Foreign-exchange application for bumidas
 // BUMIDAS for Stata
-// Version: 0.1.1
+// Version: 0.2.0
 // -----------------------------------------------------------------------------
 // Author: Stephen Snudden, PhD
 // Wilfrid Laurier University
@@ -41,9 +41,9 @@ for complete data construction and application details.
 // -----------------------------------------------------------------------------
 
 /*
-Requirements:
-  Install bumidas and mfcollapse from
-  https://github.com/SSEconomics/bumidas-stata
+//Requirements:
+//  Install bumidas and mfcollapse from
+//  https://github.com/SSEconomics/bumidas-stata
 
 net describe bumidas, from("https://raw.githubusercontent.com/SSEconomics/bumidas-stata/main")
 
@@ -59,7 +59,7 @@ capture log close _all
 
 set linesize 255
 set more off
-set maxvar 5000
+capture set maxvar 5000
 
 // -----------------------------
 // Choose Targets and benchmarks
@@ -77,7 +77,7 @@ local vari="cad"
 *local vari="cadeern"
 *local vari="nokeern"
 
-// DGP VAR Lags
+// Lag order used by benchmark specifications
 local ar=1
 
 // Forecast horizons
@@ -139,13 +139,13 @@ qui gen ae = (`vari'_ave/l.`vari'_ave-1)*100
 
 // Mixed Frequency Data Transformation - Predictor
 local npo = `ar'*(`hfn_wti'-1)
-forvalues i = 0(1)`npo'{
+forvalues i = 0(1)`=`npo'-1'{
 	qui gen llo`i'= (wti_ld`i'/l.wti_ld`i'-1)*100
 }
 
 // Mixed Frequency Data Transformation - Target
 local npe = `ar'*(`hfn_`vari''-1)
-forvalues i = 0(1)`npe'{
+forvalues i = 0(1)`=`npe'-1'{
 	qui gen lle`i'= (`vari'_ld`i'/l.`vari'_ld`i'-1)*100
 }
 
@@ -157,22 +157,22 @@ forvalues i = 0(1)`npe'{
 drop if time<tm(1986m1)
 
 // Input dates (Manually)
-local startm = 1								// Start month of forecast estimation sample     
-local starty = 2000								// Start year of forecast estimation sample 
-local endm = 6									// End month of forecast estimation sample 
-local endy = 2025								// End year of forecast estimation sample 
+local startm = 1								// Start month of forecast evaluation sample     
+local starty = 2000								// Start year of forecast evaluation sample 
+local endm = 6									// End month of forecast evaluation sample 
+local endy = 2025								// End year of forecast evaluation sample 
 
 // Sets date counters (Automatic)
 local yy1 = year[1]
 local mm1 = month[1]
 local adj = tm(`yy1'm`mm1')-1 				// Default for time is 0 at 1960m1 (see tsset) Adjusts so start = 1
-local start = tm(`starty'm`startm')-`adj'   // Start of forecast evaluation sample     
+local start = tm(`starty'm`startm')-`adj'-1 // Origin before first evaluation month
 local start0 =`start'						// Counter for period
 local startd =`start'+1						// Counter for period+1
-local end =tm(`endy'm`endm')-`adj'-1 	    // End of forecast estimation sample minus one (evaluation sample -1)
+local end =tm(`endy'm`endm')-`adj'-1 	    // End of forecast evaluation sample minus one (evaluation sample -1)
 local mm = `startm'							// Start month of loop
 local aa = `starty'							// Start year of loop
-local ar1=`ar'-1							// Lags for BUMIDAS
+local ar1=`ar'-1							// Largest HF suffix for known-order BUMIDAS
 
 local mods=5
 // For saving forecasts
@@ -186,69 +186,69 @@ forvalues i = 1(1)`mods'{
 // Loop from start to end
 while  `start0'<=`end' {
 	display "Forecasting: `aa'm`mm'" 
-	// Forecast Target Level 																								
+	// Restrict data to information available 												
 	qui gen ax= ao in 1/`start0'	
 	qui gen ay= ae in 1/`start0'	
 	// Forecasts
 	foreach h in `horizons' {
 		qui gen y= (`vari'_`tar'/l`h'.`vari'_`tar'-1)*100  in 1/`start0'
 		qui gen yl= (`vari'_`tar'/l`h'.`vari'_ld0-1)*100  in 1/`start0'
-		local arhs 
-		forvalues j=1/`ar' {
-			local hj=`h'+`j'-1
-			local arhs "`arhs' L`hj'.ay"
-		}	
 		local startd=`start0'+`h'
+		local startd1=`start0'+1
+		
 		// -------
 		// Model 1 
 		local method1 "BUMIDAS"
-		qui reg yl L`h'.llo0-llo`ar1' L`h'.lle0-lle`ar1' in 1/`start0', noconstant	
+		qui reg yl L`h'.llo0-llo`ar1' L`h'.lle0-lle`ar1', noconstant	
 		qui predict f_y			    					 
 		qui replace for`h'_mod1=f_y in `startd'/`startd'        
 		drop f_y
+		
 		// -------
-		// Model 2 
-		local method2 "LF VAR"
-		qui var ay ax, lags(1/`ar')				 
-		fcast compute f_, step(12) nose
-		qui replace for`h'_mod2=f_ay in `startd'/`startd'
-		drop f_ay f_ax
+		// Model 2
+		local method2   "BUMIDAS-BIC"
+		qui bumidas yl, hftarget(lle llo) hfmax(`npo') search(recursive) ic(bic) horizon(`h') noconstant 
+		qui predict double f_y in `startd'/`startd'
+		qui replace for`h'_mod2=f_y in `startd'/`startd'
+		drop f_y
+		
 		// -------
 		// Model 3 
-		local method3 "UMIDAS"
-		qui reg y `arhs' L`h'.llo* in 1/`start0', noconstant			 		 
-		qui predict f_y	 			    					 
-		qui replace for`h'_mod3=f_y in `startd'/`startd'        
+		local method3 "LF VAR"
+		qui var ay ax, lags(1/`ar')				 
+		fcast compute f_, step(`h') nose
+		qui gen double flvl = `vari'_`tar' in `start0'/`start0'
+		qui replace flvl=(1+f_ay/100)*L.flvl in `startd1'/`startd'
+		qui replace for`h'_mod3=100*(flvl/L`h'.`vari'_`tar'-1) in `startd'/`startd'
+		drop f_ay f_ax flvl
+		
+		// -------
+		// Model 4 - UMIDAS
+		local method4 "UMIDAS"
+		qui umidas y in 1/`start0', ///
+			hfpredictors(llo) ///
+			hfn(`hfn_wti') ///
+			porder(`ar') ///
+			horizon(`h') ///
+			noconstant
+		qui predict double f_y in `startd'/`startd'
+		qui replace for`h'_mod4=f_y in `startd'/`startd'
 		drop f_y
+
 		// -------
-		// Model 4 
-		local method4 "RMIDAS"
-		capture drop rm_*
-		local rhs
-		foreach s in o {
-			forvalues k=0/2 {
-				qui gen double rm_`s'`k'=0
-				local rhs "`rhs' rm_`s'`k'"
-			}
-		}
-		forvalues j=1/20 {
-			local lag=`j'-1
-			qui replace rm_o0=rm_o0+L`h'.llo`lag'
-			qui replace rm_o1=rm_o1+`j'*L`h'.llo`lag'
-			qui replace rm_o2=rm_o2+(`j'^2)*L`h'.llo`lag'
-		}
-		qui reg y `arhs' `rhs' in 1/`start0', noconstant
-		qui predict double rm_f in `startd'/`startd'
-		qui replace for`h'_mod4=rm_f in `startd'/`startd'
-		drop rm_*
-		// -------
-		// Model 5
-		local method5   "BUMIDAS-BIC"
-		// Recursive grid search - include EoM of both hftarget series 
-		qui bumidas yl in 1/`start0', hftarget(lle llo) hfmax(`npo') search(recursive) ic(bic) horizon(`h') noconstant 
+		// Model 5 - RMIDAS, linear Almon
+		local method5 "RMIDAS"
+		qui rmidas y in 1/`start0', ///
+			hfpredictors(llo) ///
+			hfn(`hfn_wti') ///
+			porder(`ar') ///
+			method(almon) degree(2) ///
+			horizon(`h') ///
+			noconstant
 		qui predict double f_y in `startd'/`startd'
 		qui replace for`h'_mod5=f_y in `startd'/`startd'
 		drop f_y
+		
 		// Clean-up
 		drop yl y
 	} //h
@@ -288,7 +288,7 @@ foreach h in `horizons' {
 forvalues i=1(1)`mods' {
 	foreach h in `horizons' {
 		local startd=`start'+`h'
-		if `i'==1 | `i'==5 | `i'==9 qui gen lvlfor`h'_mod`i'=(1+for`h'_mod`i'/100)*l`h'.`vari'_ld0 in `startd'/`end'
+		if `i'==1 | `i'==2 qui gen lvlfor`h'_mod`i'=(1+for`h'_mod`i'/100)*l`h'.`vari'_ld0 in `startd'/`end'
 		else qui gen lvlfor`h'_mod`i'=(1+for`h'_mod`i'/100)*l`h'.`vari'_`tar' in `startd'/`end'
 	}
 }
@@ -305,7 +305,7 @@ foreach h in `horizons' {
 		qui gen double error_mod`i'sq=error_mod`i'^2
 		qui sum error_mod`i'sq
 		scalar msfe_`i'=r(mean)
-		// End-of-Sample
+		// DM test with Newey-West HAC standard errors
 		qui gen double d`i'=error_rwsq-error_mod`i'sq
 		qui count if !missing(d`i') in `startd'/`end'
 		local obs=r(N)
@@ -320,7 +320,8 @@ foreach h in `horizons' {
 	}
 	drop error_rw error_rwsq
 }
-// Success ratios and directional-test p-values
+
+// Mean directional accuracy and PT (2009) p-values
 foreach h in `horizons' {
 	local startd=`start'+`h'
 	qui gen byte signy=(y-L`h'.y_nc)>0 in `startd'/`end'
@@ -330,7 +331,7 @@ foreach h in `horizons' {
 		qui sum da`i'
 		scalar mda`i'=r(mean)
 		local obs=r(N)
-		// End-of-Sample
+		// PT (2009) test with Newey-West HAC standard errors
 		local nlags=round(4*(`obs'/100)^(2/9))
 		qui newey signy sign`i' in `startd'/`end', lag(`nlags')
 		scalar pvsr`i'=normal(-_b[sign`i']/_se[sign`i'])
@@ -388,6 +389,7 @@ foreach h in `horizons' {
 		drop `bumerror2'
 	}
 }
+
 // -----------------------------
 // Print forecast performance
 // -----------------------------

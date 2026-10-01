@@ -2,7 +2,7 @@
 // mfcollapse_example.do
 // Examples for mfcollapse
 // BUMIDAS for Stata
-// Version: 0.1.1
+// Version: 0.2.0
 // -----------------------------------------------------------------------------
 // Author: Stephen Snudden, PhD
 // Wilfrid Laurier University
@@ -116,3 +116,5 @@ mfcollapse x, ///
 
 describe
 return list
+
+di _newline as result "mfcollapse examples completed."

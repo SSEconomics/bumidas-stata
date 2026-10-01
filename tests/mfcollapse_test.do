@@ -2,7 +2,7 @@
 // mfcollapse_test.do
 // Certification tests for mfcollapse
 // BUMIDAS for Stata
-// Version: 0.1.1
+// Version: 0.2.0
 // -----------------------------------------------------------------------------
 // Author: Stephen Snudden, PhD
 // Wilfrid Laurier University
@@ -14,7 +14,8 @@
 // It verifies the main frequency-conversion, lag-construction, anchor,
 // and validation behavior of the command.
 //
-// A successful run should complete without error.
+// A successful run should end with:
+//     All mfcollapse regression tests passed.
 //
 // See help mfcollapse for complete syntax and option documentation.
 // -----------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 *! version 0.2.0 1oct2026
-program define bumidas_p
+program define umidas_p
     version 11.0
 
-    if "`e(cmd)'"!="bumidas" error 301
+    if "`e(cmd)'"!="umidas" error 301
 
     syntax newvarname [if] [in] [, XB Residuals]
 

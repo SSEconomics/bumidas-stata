@@ -1,4 +1,4 @@
-*! version 0.1.1 27sep2026
+*! version 0.2.0 1oct2026
 program define bumidas, eclass
     version 11.0
 

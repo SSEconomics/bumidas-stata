@@ -2,7 +2,7 @@
 // bumidas_simulation.do
 // Simulation example for bumidas
 // BUMIDAS for Stata
-// Version: 0.1.1
+// Version: 0.2.0
 // -----------------------------------------------------------------------------
 // Author: Stephen Snudden, PhD
 // Wilfrid Laurier University
@@ -24,7 +24,7 @@ The following forecasts are compared:
   2. BUMIDAS with the known VAR order
   3. BUMIDAS-BIC
   4. Unrestricted MIDAS (UMIDAS)
-  5. Restricted MIDAS with a linear Almon polynomial
+  5. Restricted MIDAS (RMIDAS) with a linear Almon polynomial
   6. Low-frequency VAR
   7. End-of-period no-change
   8. Low-frequency no-change
@@ -60,7 +60,7 @@ set seed 369
 
 local varp=1            // HF VAR order: 1 or 3
 local hfperiods=20      // HF observations per LF period
-local lfperiods=2000    // number of LF periods
+local lfperiods=200    // number of LF periods
 local nburn=500         // HF burn-in observations
 local cut=0.75          // fraction of LF sample used for estimation
 local var=1             // innovation variance
@@ -298,30 +298,56 @@ else if `varp'==3 {
 qui predict double f4 in `fstart'/`fend'		
 
 // ----------------
-// Aggregate VAR
-qui var ax ay in 1/`start0', noconstant lags(1/`varp') 
-qui predict double f5 in `fstart'/`fend', equation(ax)
+// Model 5 - UMIDAS command
+// Replicates hand-coded Model 3
+qui umidas ax in 1/`start0', ///
+	hfpredictors(ldy) ///
+	hfn(`hfperiods') ///
+	porder(`varp') ///
+	horizon(1) ///
+	noconstant
+qui predict double f5 in `fstart'/`fend'
 
 // ----------------
-// End-of-Month No-change 
-qui gen double f6 = l.ldx0 in `fstart'/`fend'	
+// Model 6 - RMIDAS command
+// Replicates hand-coded Model 4
+qui rmidas ax in 1/`start0', ///
+	hfpredictors(ldy) ///
+	hfn(`hfperiods') ///
+	porder(`varp') ///
+	method(almon) degree(2) ///
+	horizon(1) ///
+	noconstant
+qui predict double f6 in `fstart'/`fend'
 
 // ----------------
-// Monthly Average No-change  
-qui gen double f7 = l.ax in `fstart'/`fend'   
+// Model 7 - Aggregate VAR
+qui var ax ay in 1/`start0', noconstant lags(1/`varp')
+qui predict double f7 in `fstart'/`fend', equation(ax)
+
+// ----------------
+// Model 8 - End-of-period no-change
+qui gen double f8=L.ldx0 in `fstart'/`fend'
+
+// ----------------
+// Model 9 - Low-frequency no-change
+qui gen double f9=L.ax in `fstart'/`fend'
 
 // ----------------
 // Number of models
-local nmod=7
+local nmod=9
+
 // Names of models
-local f0name  = "Bottom-up recursive"
-local f1name  = "BUMIDAS"
-local f2name  = "BUMIDAS-BIC"
-local f3name  = "UMIDAS"
-local f4name  = "Linear Almon"
-local f5name  = "LF VAR"
-local f6name = "EoP no-change"
-local f7name = "LF no-change"
+local f0name = "Bottom-up recursive"
+local f1name = "BUMIDAS"
+local f2name = "BUMIDAS-BIC"
+local f3name = "UMIDAS"
+local f4name = "RMIDAS"
+local f5name = "UMIDAS-cmd"
+local f6name = "RMIDAS-cmd"
+local f7name = "LF VAR"
+local f8name = "EoP no-change"
+local f9name = "LF no-change"
 
 // -----------------------------
 // Evaluate Forecasts
@@ -389,7 +415,6 @@ End-of-period no-change forecasts of temporal averages:
 	- McCarthy, M., & Snudden, S. (2025). Predictable by construction: Assessing forecast directional accuracy of temporal aggregates. Applied Economics, 1-16.
 	- Ellwanger, R., and Snudden, S. (2023). Forecasts of the real price of oil revisited: Do they beat the random walk? Journal of Banking & Finance,
 154, 106962.
-
 
 */
 

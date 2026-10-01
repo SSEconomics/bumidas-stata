@@ -1,4 +1,4 @@
-*! version 0.1.1 27sep2026
+*! version 0.2.0 1oct2026
 program define mfcollapse, rclass
     version 11.0
 
@@ -14,6 +14,39 @@ program define mfcollapse, rclass
 
     if !inlist("`frequency'","weekly","monthly","quarterly") {
         di as error "frequency() must be weekly, monthly, or quarterly"
+        exit 198
+    }
+
+    // Infer source frequency from the date display format.
+    // mofd(), qofd(), and wofd() require daily (%td) dates, so
+    // weekly and monthly source dates are converted below before use.
+    local dfmt : format `date'
+    local fmt3 = substr("`dfmt'",1,3)
+
+    if "`fmt3'"=="%td" {
+        local source_frequency "daily"
+        local srank 1
+    }
+    else if "`fmt3'"=="%tw" {
+        local source_frequency "weekly"
+        local srank 2
+    }
+    else if "`fmt3'"=="%tm" {
+        local source_frequency "monthly"
+        local srank 3
+    }
+    else {
+        di as error "date() must have a %td, %tw, or %tm display format"
+        exit 198
+    }
+
+    if "`frequency'"=="weekly"       local trank 2
+    else if "`frequency'"=="monthly" local trank 3
+    else                                local trank 4
+
+    if `trank'<=`srank' {
+        di as error ///
+            "frequency() must be lower than the source frequency (`source_frequency')"
         exit 198
     }
 
@@ -85,6 +118,22 @@ program define mfcollapse, rclass
         exit 459
     }
 
+    // Convert the source clock to a daily date before constructing
+    // lower-frequency periods.  For %tw data, dofw() uses the first
+    // day of Stata's weekly period; for %tm data, dofm() uses the
+    // first day of the month.
+    tempvar dd
+    if "`source_frequency'"=="daily" {
+        quietly gen long `dd' = `date'
+    }
+    else if "`source_frequency'"=="weekly" {
+        quietly gen long `dd' = dofw(`date')
+    }
+    else {
+        quietly gen long `dd' = dofm(`date')
+    }
+    format `dd' %td
+
     // -----------------------------
     // Establish common HF schedule
     // -----------------------------
@@ -127,17 +176,17 @@ program define mfcollapse, rclass
     // -----------------------------
 
     if "`frequency'"=="weekly" {
-        quietly gen long `lfperiod' = wofd(`date')
+        quietly gen long `lfperiod' = wofd(`dd')
         format `lfperiod' %tw
         local lfformat "%tw"
     }
     else if "`frequency'"=="monthly" {
-        quietly gen long `lfperiod' = mofd(`date')
+        quietly gen long `lfperiod' = mofd(`dd')
         format `lfperiod' %tm
         local lfformat "%tm"
     }
     else {
-        quietly gen long `lfperiod' = qofd(`date')
+        quietly gen long `lfperiod' = qofd(`dd')
         format `lfperiod' %tq
         local lfformat "%tq"
     }
@@ -262,6 +311,7 @@ program define mfcollapse, rclass
     local Nlf = _N
 
     // Dataset metadata
+    char _dta[source_frequency] "`source_frequency'"
     char _dta[lf_frequency] "`frequency'"
     char _dta[hfn] "`hfn'"
     char _dta[maxlag] "`maxlag'"
@@ -285,8 +335,9 @@ program define mfcollapse, rclass
         return scalar ar = `ar'
     }
 
-    return local frequency "`frequency'"
-    return local anchor    "`anchor'"
+    return local source_frequency "`source_frequency'"
+    return local frequency        "`frequency'"
+    return local anchor           "`anchor'"
     return local varlist   "`varlist'"
     return local date      "`date'"
     return local lagrule   "`lagrule'"
@@ -296,7 +347,8 @@ program define mfcollapse, rclass
     // -----------------------------
 
     di as text "mfcollapse: " ///
-        as result "`frequency'" ///
+        as result "`source_frequency'" ///
+        as text " -> " as result "`frequency'" ///
         as text " | anchor=" as result "`anchor'" ///
         as text " | mean HF/LF=" as result %6.2f `hfmean' ///
         as text " | n=" as result %3.0f `hfn' ///

@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1.1 27sep2026}{...}
+{* *! version 0.2.0 1oct2026}{...}
 
 {title:Title}
 
@@ -753,7 +753,7 @@ Horizon-zero nowcasting is not implemented.
 {title:References}
 
 {phang}
-Lee, S., and S. Snudden. 2025. {it:Bottom-Up Mixed-Frequency Data Sampling}.
+Lee, Q., and S. Snudden. 2025. {it:Bottom-Up Mixed-Frequency Data Sampling}.
 Working paper.
 
 {phang}
