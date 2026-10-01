@@ -1,8 +1,10 @@
-cff-version: 0.1.0
+cff-version: 1.2.0
 message: "If you use this software, please cite both the software and the associated BUMIDAS paper."
+
 title: "BUMIDAS for Stata"
 type: software
-version: 0.1.1
+version: 0.2.0
+date-released: 2026-10-01
 
 authors:
   - family-names: Snudden
@@ -16,6 +18,8 @@ license: MIT
 keywords:
   - Stata
   - BUMIDAS
+  - UMIDAS
+  - RMIDAS
   - mixed-frequency
   - MIDAS
   - forecasting
@@ -23,21 +27,25 @@ keywords:
   - econometrics
 
 abstract: >-
-  Stata commands for Bottom-Up Mixed-Frequency Data Sampling (BUMIDAS).
-  The package provides bumidas for estimation and model selection and
-  mfcollapse for constructing mixed-frequency data, together with examples,
-  certification tests, simulations, and an empirical application.
+  Stata commands for mixed-frequency data construction and forecasting.
+  The package provides mfcollapse for constructing mixed-frequency data,
+  bumidas for Bottom-Up Mixed-Frequency Data Sampling estimation and model
+  selection, umidas for unrestricted MIDAS estimation, and rmidas for
+  restricted MIDAS estimation using Almon, step, Legendre, exponential Almon,
+  and beta weighting functions. The package also includes postestimation
+  tools, examples, certification tests, simulations, and empirical
+  applications.
 
-preferred-citation:
-  type: article
-  title: "Bottom-Up Mixed-Frequency Data Sampling (BUMIDAS)"
-  authors:
-    - family-names: Lee
-      given-names: Quinlan
-    - family-names: Snudden
-      given-names: Stephen
-  year: 2025
-  date-published: 2025-04-01
-  date-released: 2026-09-27
-  doi: "10.2139/ssrn.5312038"
-  url: "https://ssrn.com/abstract=5312038"
+references:
+  - type: article
+    title: "Bottom-Up Mixed-Frequency Data Sampling (BUMIDAS)"
+    authors:
+      - family-names: Lee
+        given-names: Quinlan
+      - family-names: Snudden
+        given-names: Stephen
+    year: 2025
+    date-published: 2025-04-01
+    doi: "10.2139/ssrn.5312038"
+    url: "https://ssrn.com/abstract=5312038"
+    scope: "Please cite this paper together with the software when using BUMIDAS for Stata."
