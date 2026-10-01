@@ -1,4 +1,4 @@
 v 3
 d BUMIDAS for Stata
-d Stata commands for Bottom-Up Mixed-Frequency Data Sampling
-p bumidas BUMIDAS estimation, model selection, and mixed-frequency data construction
+d Stata commands for mixed-frequency data construction and forecasting
+p bumidas BUMIDAS estimation and model selection, UMIDAS, RMIDAS, and mfcollapse
