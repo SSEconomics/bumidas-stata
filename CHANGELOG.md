@@ -46,3 +46,24 @@ The project follows [Semantic Versioning](https://semver.org/) where practical.
 
 - Verified successful installation and execution under Stata 14 and Stata 16.
 - Confirmed continued operation under Stata 19.
+
+## v0.2.0 — 2026-10-01
+
+### Added
+- Added `umidas` for unrestricted MIDAS estimation.
+- Added `rmidas` for restricted MIDAS estimation.
+- Added RMIDAS weight functions: Almon, step, Legendre, exponential Almon, and beta.
+- Added postestimation support, help files, examples, and certification tests for `umidas` and `rmidas`.
+- Added updated simulation and empirical application code.
+- Added current paper and Stata Conference presentation materials under `conferences/`.
+
+### Changed
+- Updated `bumidas` and `mfcollapse` examples and tests for v0.2.0.
+- Updated the FX application to use the new `umidas` and `rmidas` commands.
+- Standardized mixed-frequency lag conventions and clarified the distinction between the sampling ratio `hfn()` and the number of high-frequency terms.
+- Improved documentation for model orders, forecast horizons, and RMIDAS weighting specifications.
+
+### Fixed
+- Corrected off-by-one handling in UMIDAS/RMIDAS application examples.
+- Corrected multi-step low-frequency VAR forecast construction in the FX application.
+- Improved numerical stability for nonlinear RMIDAS weights.
