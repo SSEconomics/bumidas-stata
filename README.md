@@ -45,9 +45,7 @@ prediction and forecast evaluation
 Install directly from GitHub:
 
 ```stata
-net install bumidas, ///
-    from("https://raw.githubusercontent.com/SSEconomics/bumidas-stata/main") ///
-    replace
+net install bumidas, from("https://raw.githubusercontent.com/SSEconomics/bumidas-stata/main") replace
 ```
 
 Verify the installation:
@@ -63,9 +61,6 @@ help bumidas
 help umidas
 help rmidas
 ```
-
-Repository:  
-https://github.com/SSEconomics/bumidas-stata
 
 ---
 
