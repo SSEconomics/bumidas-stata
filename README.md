@@ -106,7 +106,7 @@ hfx0 hfx1 hfx2 ...
 
 **Think of BUMIDAS as auto.arima for MIDAS models.**
 
-Estimate BUMIDAS-BIC with:
+Estimate BUMIDAS using BIC with:
 
 ```stata
 bumidas y, ///
