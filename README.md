@@ -6,7 +6,7 @@
 
 | Command | Purpose |
 |---|---|
-| `mfcollapse` | Convert higher-frequency data to a lower-frequency dataset while preserving recent higher-frequency observations and within-period averages |
+| `mfcollapse` | Collapse higher-frequency data to a mixed-frequency dataset|
 | `bumidas` | Estimate and select direct Bottom-Up Mixed-Frequency Data Sampling regressions |
 | `umidas` | Estimate unrestricted MIDAS regressions |
 | `rmidas` | Estimate restricted MIDAS regressions |
