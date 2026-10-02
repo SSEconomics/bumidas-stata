@@ -71,10 +71,7 @@ help rmidas
 Suppose `wti` is observed daily and the forecasting model is monthly:
 
 ```stata
-mfcollapse wti, ///
-    date(time) ///
-    frequency(monthly) ///
-    ar(1)
+mfcollapse wti, date(time) frequency(monthly)
 ```
 
 For a typical business-day series this may create
