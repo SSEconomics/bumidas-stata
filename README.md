@@ -104,6 +104,8 @@ hfy0 hfy1 hfy2 ...
 hfx0 hfx1 hfx2 ...
 ```
 
+**Think of BUMIDAS as auto.arima for MIDAS models.**
+
 Estimate BUMIDAS-BIC with:
 
 ```stata
