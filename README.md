@@ -150,13 +150,7 @@ umidas y, ///
     noconstant
 ```
 
-This uses one low-frequency target lag and
-
-```text
-1 x (21 - 1) = 20
-```
-
-unrestricted higher-frequency terms.
+This uses one low-frequency target lag and 20 (n - 1) unrestricted higher-frequency terms.
 
 ### 4. Estimate RMIDAS
 
