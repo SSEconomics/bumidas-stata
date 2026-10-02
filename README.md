@@ -74,7 +74,7 @@ Suppose `wti` is observed daily and the forecasting model is monthly:
 mfcollapse wti, date(time) frequency(monthly)
 ```
 
-For a typical business-day series this may create
+The number of high-frequency subperiods to retain is calculated automatically. For a typical business-day series with 21 daily observations within a month this may create
 
 ```text
 wti_ld0 wti_ld1 ... wti_ld20 wti_ave
