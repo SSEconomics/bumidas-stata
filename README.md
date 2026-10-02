@@ -30,9 +30,6 @@ higher-frequency data
     mfcollapse
         |
         v
-economic transformations
-        |
-        v
  bumidas / umidas / rmidas
         |
         v
