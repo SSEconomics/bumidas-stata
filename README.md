@@ -235,14 +235,6 @@ porders(3 1)
 
 with `hfn(21)` means three low-frequency target lags and 20 higher-frequency terms.
 
-A one-element specification such as
-
-```stata
-porders(3)
-```
-
-is invalid when one higher-frequency predictor is supplied. Use `porder(3)` for a common order.
-
 When combining higher-frequency series with different source frequencies, specifying `hfn()` explicitly is recommended.
 
 ---
