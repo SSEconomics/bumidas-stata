@@ -24,14 +24,14 @@ MIDAS estimates the direct forecast of lower-frequency data using higher-frequen
 How MIDAS works in Stata:
 ```text
 load higher-frequency data
-        |
-        v
+            |
+            v
 mfcollapse creates mixed freq. data
-        |
-        v
- estimate using bumidas / umidas / rmidas
-        |
-        v
+            |
+            v
+estimate using bumidas / umidas / rmidas
+            |
+            v
 prediction and forecast evaluation
 ```
 
@@ -54,12 +54,24 @@ which mfcollapse
 which bumidas
 which umidas
 which rmidas
+```
 
+---
+
+## Documentation and requirements
+
+Detailed documentation is available directly in Stata:
+
+```stata
 help mfcollapse
 help bumidas
 help umidas
 help rmidas
 ```
+
+The commands are designed for **Stata 11 or later**. Estimation commands that use time-series operators require data to be appropriately declared with `tsset`.
+
+See `CHANGELOG.md` for version history.
 
 ---
 
@@ -79,7 +91,7 @@ The number of high-frequency subperiods to retain is calculated automatically. F
 wti_ld0 wti_ld1 ... wti_ld20 wti_ave
 ```
 
-where `wti_ave' is the monthly average `[t]`, `wti_ld0` is the end-of-month high-frequency observation `[t,n]`, `wti_ld1` is the second last daily observation `[t,n-1]`, `wti_ld2` is the third last daily observation `[t,n-2]`, etc.
+where `wti_ave` is the monthly average `[t]`, `wti_ld0` is the end-of-month high-frequency observation `[t,n]`, `wti_ld1` is the second last daily observation `[t,n-1]`, `wti_ld2` is the third last daily observation `[t,n-2]`, etc.
 
 Supported conversions are:
 
@@ -137,7 +149,7 @@ umidas y, ///
     noconstant
 ```
 
-The `umidas' command can automatically searh order `p' of `p(n-1)' using information criteria.
+The `umidas' command can automatically searh order `p` of `p(n-1)` using information criteria.
 
 ### 4. Estimate RMIDAS
 
@@ -158,7 +170,7 @@ rmidas y, ///
 
 ### `hfn()` is the sampling ratio
 
-`mfcollaspe' automatically returns `hfn()`, the number of HF observations per LF period `n'.
+`mfcollaspe' automatically returns `hfn()`, the number of HF observations per LF period `n`.
 
 For example,
 
@@ -166,7 +178,7 @@ For example,
 hfn(21)
 ```
 
-with higher-frequency order `p=1' implies
+with higher-frequency order `p=1` implies
 
 ```text
 1 x (21 - 1) = 20
@@ -186,7 +198,7 @@ The estimation commands can use the `hfn()` from each HF series to easily combin
 
 Higher-frequency blocks are provided through variable-name stubs.
 
-For example, given the stub `hfy` and `p=1', the HF data for 3 months in a quarter `hfn(3)` is
+For example, given the stub `hfy` and `p=1`, the HF data for 3 months in a quarter `hfn(3)` is
 
 ```text
 hfy0 hfy1 hfy2 
@@ -194,7 +206,7 @@ hfy0 hfy1 hfy2
 
 Blocks in `hftarget()` are required. Blocks in `hfpredictors()` are optional.
 
-The autoregressive order `p' denotes how many quarters of HF data to use based on `p(n-1)': 
+The autoregressive order `p` denotes how many quarters of HF data to use based on `p(n-1)`: 
 
 ```text
 p=0 => omitted
@@ -202,7 +214,7 @@ p=1 = hfy0 hfy1 hfy2
 p=2 = hfy0 hfy1 hfy2 hfy3 hfy4 hfy5 
 ```
 
-BUMIDAS searches individual HF predictors over `p(n-1)', UMIDAS searches over `p' given `n'.
+BUMIDAS searches individual HF predictors over `p(n-1)`, UMIDAS searches over `p` given `n`.
 
 Selection modes for IC are:
 
@@ -363,23 +375,6 @@ bumidas-stata/
 |-- simulations/
 `-- conferences/
 ```
-
----
-
-## Documentation and requirements
-
-Detailed documentation is available directly in Stata:
-
-```stata
-help mfcollapse
-help bumidas
-help umidas
-help rmidas
-```
-
-The commands are designed for **Stata 11 or later**. Estimation commands that use time-series operators require data to be appropriately declared with `tsset`.
-
-See `CHANGELOG.md` for version history.
 
 ---
 
