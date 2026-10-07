@@ -149,7 +149,7 @@ umidas y, ///
     noconstant
 ```
 
-The `umidas' command can automatically searh order `p` of `p(n-1)` using information criteria.
+The `umidas` command can automatically searh order `p` of `p(n-1)` using information criteria.
 
 ### 4. Estimate RMIDAS
 
@@ -170,7 +170,7 @@ rmidas y, ///
 
 ### `hfn()` is the sampling ratio
 
-`mfcollaspe' automatically returns `hfn()`, the number of HF observations per LF period `n`.
+`mfcollaspe` automatically returns `hfn()`, the number of HF observations per LF period `n`.
 
 For example,
 
@@ -393,9 +393,9 @@ https://github.com/SSEconomics/bumidas-stata
 
 A machine-readable citation is provided in `CITATION.cff`.
 
-## MIDAS research background
+### MIDAS research background
 
-The BUMIDAS methodology:
+The BUMIDAS paper:
 
 > Lee, Quinlan and Stephen Snudden. **“Bottom-Up Mixed-Frequency Data Sampling (BUMIDAS).”** 2025.  
 > DOI: 10.2139/ssrn.5312038  
