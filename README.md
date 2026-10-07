@@ -1,14 +1,14 @@
-# BUMIDAS for Stata
+# MIDAS for Stata
 
-**BUMIDAS for Stata** provides Stata commands for mixed-frequency data construction, estimation, model selection, and forecasting.
+**MIDAS for Stata** provides Stata commands for mixed-frequency data construction, estimation, model selection, and forecasting.
 
 **Current version:** 0.2.0
 
 | Command | Purpose |
 |---|---|
 | `mfcollapse` | Collapse higher-frequency data to a mixed-frequency dataset|
-| `bumidas` | Estimate and select direct Bottom-Up Mixed-Frequency Data Sampling regressions |
-| `umidas` | Estimate unrestricted MIDAS regressions |
+| `bumidas` | Estimate and select direct Bottom-Up MIDAS regressions |
+| `umidas` | Estimate and select unrestricted MIDAS regressions |
 | `rmidas` | Estimate restricted MIDAS regressions |
 
 `rmidas` supports **Almon**, **step**, **Legendre**, **exponential Almon**, and **beta** weights.
@@ -17,20 +17,19 @@ The repository also contains self-contained examples, certification tests, an ex
 
 ---
 
-## Why BUMIDAS?
+## Why MIDAS?
 
-Forecasts are often constructed for temporally aggregated variables—such as monthly averages or quarterly sums—even when higher-frequency information is available.
+MIDAS estimates the direct forecast of lower-frequency data using higher-frequency data. This aviods discarding valuable information, substantially improving forecast accuracy.
 
-BUMIDAS estimates the direct forecast using the relevant higher-frequency state rather than first discarding that information through temporal aggregation.
-
+How MIDAS works in Stata:
 ```text
-higher-frequency data
+load higher-frequency data
         |
         v
-    mfcollapse
+mfcollapse creates mixed freq. data
         |
         v
- bumidas / umidas / rmidas
+ estimate using bumidas / umidas / rmidas
         |
         v
 prediction and forecast evaluation
@@ -42,7 +41,7 @@ prediction and forecast evaluation
 
 ## Installation
 
-Install directly from GitHub:
+Install the four commands directly from GitHub using one line:
 
 ```stata
 net install bumidas, from("https://raw.githubusercontent.com/SSEconomics/bumidas-stata/main") replace
@@ -68,19 +67,19 @@ help rmidas
 
 ### 1. Construct mixed-frequency data
 
-Suppose `wti` is observed daily and the forecasting model is monthly:
+Suppose `wti` is observed daily and you want to forecast the monthly average:
 
 ```stata
 mfcollapse wti, date(time) frequency(monthly)
 ```
 
-The number of high-frequency subperiods to retain is calculated automatically. For a typical business-day series with 21 daily observations within a month this may create
+The number of high-frequency subperiods to retain is calculated automatically. For oil, it will find that there are typically 21 daily business-day observations within a month so will create monthly series
 
 ```text
 wti_ld0 wti_ld1 ... wti_ld20 wti_ave
 ```
 
-where `wti_ld0` is the most recent available higher-frequency observation in the lower-frequency period.
+where `wti_ave' is the monthly average `[t]`, `wti_ld0` is the end-of-month high-frequency observation `[t,n]`, `wti_ld1` is the second last daily observation `[t,n-1]`, `wti_ld2` is the third last daily observation `[t,n-2]`, etc.
 
 Supported conversions are:
 
@@ -95,7 +94,7 @@ monthly -> quarterly
 
 See `help mfcollapse` for lag construction, anchors, metadata, explicit lag choices, and returned results.
 
-### 2. Estimate BUMIDAS
+### 2. Estimate MIDAS model
 
 After the desired transformations, suppose the mixed-frequency blocks are
 
@@ -106,7 +105,7 @@ hfx0 hfx1 hfx2 ...
 
 **Think of BUMIDAS as auto.arima for MIDAS models.**
 
-Estimate BUMIDAS using BIC with:
+Use information criteria to find and estimate best fitting unrestricted model using the daily data of the target and predictor:
 
 ```stata
 bumidas y, ///
@@ -114,18 +113,6 @@ bumidas y, ///
     hfpredictors(hfx) ///
     hfmax(20) ///
     search(full) ///
-    ic(bic) ///
-    noconstant
-```
-
-For larger model spaces, use the faster greedy search:
-
-```stata
-bumidas y, ///
-    hftarget(hfy) ///
-    hfpredictors(hfx) ///
-    hfmax(20) ///
-    search(recursive) ///
     ic(bic) ///
     noconstant
 ```
@@ -140,7 +127,7 @@ predict double uhat, residuals
 
 ### 3. Estimate UMIDAS
 
-With one higher-frequency predictor and 21 source-frequency observations per lower-frequency period:
+Use 21 lags of the higher-frequency predictor and the lag of the low-frequency target:
 
 ```stata
 umidas y, ///
@@ -150,7 +137,7 @@ umidas y, ///
     noconstant
 ```
 
-This uses one low-frequency target lag and 20 (n - 1) unrestricted higher-frequency terms.
+The `umidas' command can automatically searh order `p' of `p(n-1)' using information criteria.
 
 ### 4. Estimate RMIDAS
 
@@ -165,25 +152,13 @@ rmidas y, ///
     noconstant
 ```
 
-Other supported restrictions are available through `method()`:
-
-```text
-almon
-step
-legendre
-expalmon
-beta
-```
-
-See `help rmidas` for parameterizations, method-specific options, weights, and stored results.
-
 ---
 
 ## Important order conventions
 
 ### `hfn()` is the sampling ratio
 
-`hfn()` specifies the number of source-frequency observations per lower-frequency period—not the number of regressors.
+`mfcollaspe' automatically returns `hfn()`, the number of HF observations per LF period `n'.
 
 For example,
 
@@ -191,7 +166,7 @@ For example,
 hfn(21)
 ```
 
-with higher-frequency order 1 implies
+with higher-frequency order `p=1' implies
 
 ```text
 1 x (21 - 1) = 20
@@ -203,76 +178,43 @@ higher-frequency terms:
 hfx0 ... hfx19
 ```
 
-### `porder()` versus `porders()`
-
-`porder(#)` applies the same order to the low-frequency target and every higher-frequency predictor.
-
-With one higher-frequency predictor:
-
-```stata
-porder(3)
-```
-
-is equivalent to
-
-```stata
-porders(3 3)
-```
-
-`porders()` allows block-specific orders and must contain exactly **J + 1** positive values:
-
-```text
-porders(p_y p_1 ... p_J)
-```
-
-where the first value is the low-frequency target order and the remaining values correspond to the higher-frequency predictors.
-
-For example,
-
-```stata
-porders(3 1)
-```
-
-with `hfn(21)` means three low-frequency target lags and 20 higher-frequency terms.
-
-When combining higher-frequency series with different source frequencies, specifying `hfn()` explicitly is recommended.
+The estimation commands can use the `hfn()` from each HF series to easily combine alternative HF sampling (weekly and daily) on RHS.   
 
 ---
 
 ## Command notes
 
-### `bumidas`
+Higher-frequency blocks are provided through variable-name stubs.
 
-`bumidas` identifies higher-frequency blocks through variable-name stubs.
-
-For
+For example, given the stub `hfy` and `p=1', the HF data for 3 months in a quarter `hfn(3)` is
 
 ```text
-hfy0 hfy1 hfy2 hfy3
-```
-
-the stub is `hfy`, and orders count included terms:
-
-```text
-order 0 = omitted
-order 1 = hfy0
-order 2 = hfy0 hfy1
-order 3 = hfy0 hfy1 hfy2
+hfy0 hfy1 hfy2 
 ```
 
 Blocks in `hftarget()` are required. Blocks in `hfpredictors()` are optional.
 
-Selection modes are:
+The autoregressive order `p' denotes how many quarters of HF data to use based on `p(n-1)': 
+
+```text
+p=0 => omitted
+p=1 = hfy0 hfy1 hfy2 
+p=2 = hfy0 hfy1 hfy2 hfy3 hfy4 hfy5 
+```
+
+BUMIDAS searches individual HF predictors over `p(n-1)', UMIDAS searches over `p' given `n'.
+
+Selection modes for IC are:
 
 ```text
 search(full)       exhaustive IC search
-search(recursive)  greedy forward block-order search
+search(recursive)  forward block-order search
 search(none)       fixed-order estimation
 ```
 
 The command supports BIC, HQIC, AIC, low-frequency target and predictor lags, controls, multiple higher-frequency blocks, and direct multi-period horizons. Candidate models within a search are estimated on a common sample.
 
-See `help bumidas` for complete syntax and stored results.
+See `help bumidas` and `help umidas` for complete syntax and stored results.
 
 ### `rmidas`
 
@@ -296,26 +238,39 @@ See `help rmidas` for method-specific references and implementation details.
 
 `mfcollapse` does **not** impose an economic transformation on the underlying series.
 
-Transformations may be applied either before or after collapsing, depending on what the mixed-frequency regressors are intended to represent.
+Transformations may be applied either before or after collapsing, depending on the desired lag use.
 
-For example, after collapsing daily WTI levels:
+For example, after collapsing daily WTI levels to months, the lag in the growth rate:
 
 ```stata
 gen llo0 = 100*(wti_ld0/L.wti_ld0 - 1)
 gen llo1 = 100*(wti_ld1/L.wti_ld1 - 1)
+...
 ```
 
-constructs changes in the same retained higher-frequency positions across lower-frequency periods.
+constructs month-over-month changes.
 
-If the desired regressors are instead day-over-day changes, transform the daily data first and then call `mfcollapse`.
+Instead, if day-over-day is desired, transform the daily data first 
 
-These operations are generally not equivalent:
+```stata
+gen llo = 100*(wti/L.wti - 1)
+```
+
+then call `mfcollapse`:
+
+```stata
+gen llo0 
+gen llo1
+...
+```
+
+These order of the operations are not equivalent:
 
 ```text
 transform -> collapse  !=  collapse -> transform
 ```
 
-The appropriate ordering is an economic modeling choice. The exchange-rate application illustrates transformation after `mfcollapse`.
+The appropriate tranformation is a modeling choice. 
 
 ---
 
@@ -330,14 +285,6 @@ umidas_example.do
 rmidas_example.do
 ```
 
-Run, for example:
-
-```stata
-do examples/bumidas_example.do
-do examples/umidas_example.do
-do examples/rmidas_example.do
-```
-
 Certification tests are provided in `tests/`:
 
 ```stata
@@ -348,8 +295,6 @@ do tests/rmidas_test.do
 ```
 
 The tests cover data construction, estimation, model selection, order handling, horizon timing, prediction, stored results, and input validation.
-
-The UMIDAS and RMIDAS tests include comparisons with equivalent hand-coded regressions. RMIDAS additionally tests its linear and nonlinear weighting implementations.
 
 ---
 
@@ -362,7 +307,7 @@ The exchange-rate application uses daily exchange rates and WTI oil prices in an
 It compares:
 
 - BUMIDAS;
-- BUMIDAS with information-criterion selection;
+- BUMIDAS with BIC selection;
 - UMIDAS;
 - RMIDAS;
 - a low-frequency VAR;
@@ -376,15 +321,13 @@ The representative simulation generates a higher-frequency VAR process, aggregat
 
 - recursive bottom-up forecasting;
 - known-order BUMIDAS;
-- BUMIDAS with information-criterion selection;
+- BUMIDAS with BIC selection;
 - UMIDAS;
 - RMIDAS;
 - a low-frequency VAR;
 - end-of-period and low-frequency no-change forecasts.
 
-The command-based UMIDAS and RMIDAS forecasts are validated against equivalent hand-coded implementations.
-
-These files are examples rather than the complete journal replication archive.
+The simulation file is an example rather than any replication from the article.
 
 ---
 
@@ -440,18 +383,6 @@ See `CHANGELOG.md` for version history.
 
 ---
 
-## Research background
-
-The BUMIDAS methodology is developed in:
-
-> Lee, Quinlan and Stephen Snudden. **“Bottom-Up Mixed-Frequency Data Sampling (BUMIDAS).”** 2025.  
-> DOI: 10.2139/ssrn.5312038  
-> https://ssrn.com/abstract=5312038
-
-The paper develops direct bottom-up mixed-frequency forecasting for temporally aggregated processes and studies the roles of higher-frequency target information, predictors, proxies, and low-frequency information.
-
----
-
 ## Citation
 
 If you use this software, please cite both the software and the associated BUMIDAS paper.
@@ -467,13 +398,17 @@ https://github.com/SSEconomics/bumidas-stata
 
 A machine-readable citation is provided in `CITATION.cff`.
 
-### Methodology
+## MIDAS research background
+
+The BUMIDAS methodology:
 
 > Lee, Quinlan and Stephen Snudden. **“Bottom-Up Mixed-Frequency Data Sampling (BUMIDAS).”** 2025.  
 > DOI: 10.2139/ssrn.5312038  
 > https://ssrn.com/abstract=5312038
 
-Users employing UMIDAS, RMIDAS, or other MIDAS specifications should also cite the original methodological references appropriate to those methods. Method-specific references are listed in the command help files.
+The paper develops BUMIDAS and studies the efficicent use of MF data and model structure, when the HF data of the target is observed, proxied, or unobserved.
+
+Users employing other MIDAS specifications should also cite the original methodological references appropriate to those methods. 
 
 ---
 
