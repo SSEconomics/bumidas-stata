@@ -19,7 +19,7 @@ The repository also contains self-contained examples, certification tests, an ex
 
 ## Why MIDAS?
 
-MIDAS estimates the direct forecast of lower-frequency data using higher-frequency data. This aviods discarding valuable information, substantially improving forecast accuracy.
+MIDAS estimates the direct forecast of lower-frequency data using higher-frequency data. This avoids discarding valuable information, substantially improving forecast accuracy.
 
 How MIDAS works in Stata:
 ```text
@@ -149,7 +149,7 @@ umidas y, ///
     noconstant
 ```
 
-The `umidas` command can automatically searh order `p` of `p(n-1)` using information criteria.
+The `umidas` command can automatically search order `p` of `p(n-1)` using information criteria.
 
 ### 4. Estimate RMIDAS
 
@@ -170,7 +170,7 @@ rmidas y, ///
 
 ### `hfn()` is the sampling ratio
 
-`mfcollaspe` automatically returns `hfn()`, the number of HF observations per LF period `n`.
+`mfcollapse` automatically returns `hfn()`, the number of HF observations per LF period `n`.
 
 For example,
 
@@ -282,7 +282,7 @@ These order of the operations are not equivalent:
 transform -> collapse  !=  collapse -> transform
 ```
 
-The appropriate tranformation is a modeling choice. 
+The appropriate transformation is a modeling choice. 
 
 ---
 
@@ -401,7 +401,7 @@ The BUMIDAS paper:
 > DOI: 10.2139/ssrn.5312038  
 > https://ssrn.com/abstract=5312038
 
-The paper develops BUMIDAS and studies the efficicent use of MF data and model structure, when the HF data of the target is observed, proxied, or unobserved.
+The paper develops BUMIDAS and studies the efficient use of MF data and model structure, when the HF data of the target is observed, proxied, or unobserved.
 
 Users employing other MIDAS specifications should also cite the original methodological references appropriate to those methods. 
 
