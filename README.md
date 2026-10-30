@@ -407,6 +407,18 @@ Users employing other MIDAS specifications should also cite the original methodo
 
 ---
 
+### Conference presentation
+
+Snudden, Stephen. 2026.
+"Implementing mixed-data sampling models for temporal sampling and aggregation in Stata."
+[2026 Stata Conference](https://www.stata.com/meeting/us26/?utm_source=20261013us&utm_medium=email&utm_campaign=sugm&utm_content=us26_proc), Boston, MA, October 1-2.
+https://www.stata.com/meeting/us26/slides/US26_Snudden.zip
+
+The proceedings archive contains the prototype code shown in the talk.
+The commands in this repository supersede it.
+
+---
+
 ## License and feedback
 
 This project is licensed under the MIT License.
